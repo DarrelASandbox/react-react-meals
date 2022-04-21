@@ -4,8 +4,8 @@ const CartContext = React.createContext({
   items: [],
   totalQuantity: 0,
   totalPrice: 0,
-  addCartItemHandler: (item) => {},
-  removeCartItemHandler: (id) => {},
+  addCartItem: (item) => {},
+  removeCartItem: (id) => {},
 });
 
 const defaultCartState = {
@@ -36,18 +36,18 @@ const CartProvider = ({ children }) => {
     defaultCartState
   );
 
-  const addCartItemHandler = (item) =>
+  const addCartItem = (item) =>
     dispatchCartAction({ type: 'ADD_CART_ITEM', item });
 
-  const removeCartItemHandler = (id) =>
+  const removeCartItem = (id) =>
     dispatchCartAction({ type: 'REMOVE_CART_ITEM', id });
 
   const cartContext = {
     items: cartState.items,
     totalQuantity: cartState.totalQuantity,
     totalPrice: cartState.totalPrice,
-    addCartItemHandler,
-    removeCartItemHandler,
+    addCartItem,
+    removeCartItem,
   };
 
   return (
