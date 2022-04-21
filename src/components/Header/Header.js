@@ -2,11 +2,11 @@ import mealsImage from '../assets/meals.jpg';
 import classes from './Header.module.css';
 import HeaderCartButton from './HeaderCartButton';
 
-const Header = () => (
+const Header = ({ onShowCart }) => (
   <>
     <header className={classes.header}>
       <h1>ReactMeals</h1>
-      <HeaderCartButton>Cart</HeaderCartButton>
+      <HeaderCartButton onShowCart={onShowCart} />
     </header>
 
     <div className={classes['main-image']}>
