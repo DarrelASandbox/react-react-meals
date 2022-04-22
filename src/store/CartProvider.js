@@ -11,19 +11,42 @@ const CartContext = React.createContext({
 const defaultCartState = {
   items: [],
   totalQuantity: 0,
+  totalPrice: 0,
 };
 
 const cartReducer = (state, action) => {
   switch (action.type) {
-    case 'ADD_CART_ITEM':
-      const updatedItems = state.items.concat(action.item); // concat returns new array
-      const updatedTotalPrice =
-        state.totalPrice + action.item.price * action.item.totalQuantity;
+    case 'ADD_CART_ITEM': {
+      const updatedState = { ...state };
+      const existingItemIndex = updatedState.items.findIndex(
+        (item) => item.id === action.item.id
+      );
 
-      return { items: updatedItems, totalPrice: updatedTotalPrice };
+      existingItemIndex >= 0
+        ? (updatedState.items[existingItemIndex].quantity +=
+            action.item.quantity)
+        : updatedState.items.push(action.item);
 
-    case 'REMOVE_CART_ITEM':
-      return;
+      updatedState.totalPrice += action.item.quantity * action.item.price;
+      return updatedState;
+    }
+
+    case 'REMOVE_CART_ITEM': {
+      let updatedState = { ...state };
+      const existingItemIndex = updatedState.items.findIndex(
+        (item) => item.id === action.id
+      );
+
+      updatedState.totalPrice -= updatedState.items[existingItemIndex].price;
+
+      if (updatedState.items[existingItemIndex].quantity === 1) {
+        updatedState.items = updatedState.items.filter(
+          (item) => item.id !== action.id
+        );
+      } else updatedState.items[existingItemIndex].quantity -= 1;
+
+      return updatedState;
+    }
 
     default:
       return state;

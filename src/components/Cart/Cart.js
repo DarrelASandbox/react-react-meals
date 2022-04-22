@@ -1,38 +1,26 @@
+import { useContext } from 'react';
+import CartContext from '../../store/CartProvider';
 import { Modal } from '../UI/';
+import { CartItem } from './';
 import classes from './Cart.module.css';
 
-const DUMMY_CART = [
-  {
-    id: 'c1',
-    name: 'Sushi',
-    quantity: 3,
-    price: 22.99,
-  },
-  {
-    id: 'c2',
-    name: 'Schnitzel',
-    quantity: 5,
-    price: 16.5,
-  },
-  {
-    id: 'c3',
-    name: 'Barbecue Burger',
-    quantity: 19,
-    price: 12.99,
-  },
-  {
-    id: 'c4',
-    name: 'Green Bowl',
-    quantity: 6,
-    price: 18.99,
-  },
-];
-
 const Cart = ({ onHideCart }) => {
+  const cartContext = useContext(CartContext);
+
+  const removeCartItemHandler = (id) => cartContext.removeCartItem(id);
+
+  const addCartItemHandler = (item) =>
+    cartContext.addCartItem({ ...item, quantity: 1 });
+
   const cartItems = (
     <ul className={classes['cart-items']}>
-      {DUMMY_CART.map((item) => (
-        <li key={item.id}>{item.name}</li>
+      {cartContext.items.map((item) => (
+        <CartItem
+          key={item.id}
+          item={item}
+          onRemoveCartItem={removeCartItemHandler}
+          onAddCartItem={addCartItemHandler}
+        />
       ))}
     </ul>
   );
@@ -43,14 +31,16 @@ const Cart = ({ onHideCart }) => {
         {cartItems}
         <div className={classes.total}>
           <span>Total Price</span>
-          <span>1921742.2342</span>
+          <span>{`$${Math.abs(cartContext.totalPrice).toFixed(2)}`}</span>
         </div>
 
         <div className={classes.actions}>
           <button className={classes['button-alt']} onClick={onHideCart}>
             Close
           </button>
-          <button className={classes.button}>Order</button>
+          {cartContext.items.length > 0 && (
+            <button className={classes.button}>Order</button>
+          )}
         </div>
       </div>
     </Modal>
