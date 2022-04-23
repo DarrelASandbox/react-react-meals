@@ -6,13 +6,17 @@ import classes from './MealsAvailable.module.css';
 const MealsAvailable = () => {
   const [meals, setMeals] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [httpError, setHttpError] = useState();
 
   useEffect(() => {
     const fetchedMeals = [];
+
     const fetchMeals = async () => {
-      const responseObject = await (
-        await fetch(`${process.env.REACT_APP_FIREBASE_URI}/meals.json`)
-      ).json();
+      const response = await fetch(
+        `${process.env.REACT_APP_FIREBASE_URI}/meals.json`
+      );
+      if (!response.ok) throw new Error('Something went wrong!');
+      const responseObject = await response.json();
 
       for (const key in responseObject) {
         fetchedMeals.push({
@@ -27,13 +31,23 @@ const MealsAvailable = () => {
       setIsLoading(false);
     };
 
-    fetchMeals();
+    fetchMeals().catch((error) => {
+      setIsLoading(false);
+      setHttpError(error.message);
+    });
   }, []);
 
   if (isLoading)
     return (
       <section className={classes.spinner}>
         <p>Loading...</p>
+      </section>
+    );
+
+  if (httpError)
+    return (
+      <section className={classes.MealsError}>
+        <p>{httpError}</p>
       </section>
     );
 

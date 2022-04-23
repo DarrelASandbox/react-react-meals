@@ -130,3 +130,30 @@ const cartReducer = (state, action) => {
 ---
 
 &nbsp;
+
+> <b>Hendry: </b> try catch in async declaration
+> Can we not just use Try Catch inside the actual async function declaration, instead of when we call it, like in previous lectures? Is there a reason we wouldn't do that?
+
+> <b>Ejin: </b> Hi Henry, you need to be careful when using try...catch in an async function. When using try...catch in an async function, the async function will return a fulfilled promise after running the catch block. Therefore, if you want to trigger the catch block in outer function calling the async function, you need to throw a new error under the catch block of the async funciton.
+
+> <b>Shrey: </b>@Ejin But in this case, it should not matter because the whole purpose of running the catch block is to update the error state and re-render the component so that it shows error message (which is stored in our error state).
+
+&nbsp;
+
+---
+
+&nbsp;
+
+> <b>Christopher: </b>Is the throw new error necessary?
+
+> <b>Jost: </b>Yes, that's necessary.
+>
+> With ... `https://${firebaseProject}.firebaseio.com/meals` ... (forgotten extension) the request as such is rejected, so that the code goes directly to the catch block. But if you try e.g. ... `https://${firebaseProject}.firebaseio.com/meals.foo` ... you will get a 404 response from Firebase.
+>
+> Since this response is not a valid JSON, you would get an ugly "Unexpected token o in JSON at position 1" message when omitting this check.
+
+&nbsp;
+
+---
+
+&nbsp;
