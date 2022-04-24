@@ -7,11 +7,23 @@ import classes from './Cart.module.css';
 const Cart = ({ onHideCart }) => {
   const cartContext = useContext(CartContext);
   const [isCheckout, setIsCheckout] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [didSubmit, setDidSubmit] = useState(false);
 
   const removeCartItemHandler = (id) => cartContext.removeCartItem(id);
   const addCartItemHandler = (item) =>
     cartContext.addCartItem({ ...item, quantity: 1 });
-  const orderHandler = (e) => setIsCheckout(true);
+
+  const orderHandler = () => setIsCheckout(true);
+  const submitOrderHandler = async (userData) => {
+    setIsSubmitting(true);
+    await fetch(`${process.env.REACT_APP_FIREBASE_URI}/orders.json`, {
+      method: 'POST',
+      body: JSON.stringify({ userData, orderedItems: cartContext.items }),
+    });
+    setIsSubmitting(false);
+    setDidSubmit(true);
+  };
 
   const cartItems = (
     <ul className={classes['cart-items']}>
@@ -24,6 +36,16 @@ const Cart = ({ onHideCart }) => {
         />
       ))}
     </ul>
+  );
+
+  const isSubmittingModalContent = <p>Sending order data...</p>;
+  const didSubmitModalContent = (
+    <>
+      <p>Successfully sent the order!</p>
+      <button className={classes.button} onClick={onHideCart}>
+        Close
+      </button>
+    </>
   );
 
   const modalActions = (
@@ -39,17 +61,26 @@ const Cart = ({ onHideCart }) => {
     </div>
   );
 
+  const cartModalContent = (
+    <>
+      {cartItems}
+      <div className={classes.total}>
+        <span>Total Price</span>
+        <span>{`$${Math.abs(cartContext.totalPrice).toFixed(2)}`}</span>
+      </div>
+      {isCheckout && (
+        <Checkout onHideCart={onHideCart} onSubmitOrder={submitOrderHandler} />
+      )}
+      {!isCheckout && modalActions}
+    </>
+  );
+
   return (
     <Modal onHideCart={onHideCart}>
       <div>
-        {cartItems}
-        <div className={classes.total}>
-          <span>Total Price</span>
-          <span>{`$${Math.abs(cartContext.totalPrice).toFixed(2)}`}</span>
-        </div>
-
-        {isCheckout && <Checkout onHideCart={onHideCart} />}
-        {!isCheckout && modalActions}
+        {!isSubmitting && !didSubmit && cartModalContent}
+        {isSubmitting && isSubmittingModalContent}
+        {!isSubmitting && didSubmit && didSubmitModalContent}
       </div>
     </Modal>
   );

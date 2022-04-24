@@ -4,7 +4,7 @@ import { useRef, useState } from 'react';
 const isEmpty = (value) => value.trim() === '';
 const isFiveChars = (value) => value.trim().length === 5;
 
-const Checkout = ({ onHideCart }) => {
+const Checkout = ({ onHideCart, onSubmitOrder }) => {
   // Refer to react-basic-react-form repo for a more elaborated form setup
   const [formInputsValidity, setFormInputsValidity] = useState({
     name: true,
@@ -45,6 +45,12 @@ const Checkout = ({ onHideCart }) => {
       cityInputIsValid;
 
     if (!formIsValid) return;
+    onSubmitOrder({
+      name: nameInput,
+      street: streetInput,
+      postalCode: postalCodeInput,
+      city: cityInput,
+    });
   };
 
   const controlClasses = (formInputField) =>
