@@ -21,8 +21,10 @@ const Cart = ({ onHideCart }) => {
       method: 'POST',
       body: JSON.stringify({ userData, orderedItems: cartContext.items }),
     });
+
     setIsSubmitting(false);
     setDidSubmit(true);
+    cartContext.clearCart();
   };
 
   const cartItems = (
@@ -42,9 +44,11 @@ const Cart = ({ onHideCart }) => {
   const didSubmitModalContent = (
     <>
       <p>Successfully sent the order!</p>
-      <button className={classes.button} onClick={onHideCart}>
-        Close
-      </button>
+      <div className={classes.actions}>
+        <button className={classes.button} onClick={onHideCart}>
+          Close
+        </button>
+      </div>
     </>
   );
 
