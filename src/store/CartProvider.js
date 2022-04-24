@@ -2,7 +2,6 @@ import React, { useReducer } from 'react';
 
 const CartContext = React.createContext({
   items: [],
-  totalQuantity: 0,
   totalPrice: 0,
   addCartItem: (item) => {},
   removeCartItem: (id) => {},
@@ -11,14 +10,13 @@ const CartContext = React.createContext({
 
 const defaultCartState = {
   items: [],
-  totalQuantity: 0,
   totalPrice: 0,
 };
 
 const cartReducer = (state, action) => {
   switch (action.type) {
     case 'ADD_CART_ITEM': {
-      const updatedState = { ...state };
+      const updatedState = JSON.parse(JSON.stringify({ ...state }));
       const existingItemIndex = updatedState.items.findIndex(
         (item) => item.id === action.item.id
       );
@@ -33,7 +31,7 @@ const cartReducer = (state, action) => {
     }
 
     case 'REMOVE_CART_ITEM': {
-      let updatedState = { ...state };
+      let updatedState = JSON.parse(JSON.stringify({ ...state }));
       const existingItemIndex = updatedState.items.findIndex(
         (item) => item.id === action.id
       );
@@ -50,11 +48,7 @@ const cartReducer = (state, action) => {
     }
 
     case 'CLEAR_CART':
-      return {
-        items: [],
-        totalQuantity: 0,
-        totalPrice: 0,
-      };
+      return defaultCartState;
 
     default:
       return defaultCartState;
@@ -77,7 +71,6 @@ const CartProvider = ({ children }) => {
 
   const cartContext = {
     items: cartState.items,
-    totalQuantity: cartState.totalQuantity,
     totalPrice: cartState.totalPrice,
     addCartItem,
     removeCartItem,
